@@ -22,8 +22,10 @@ class AllTests {
         val subscriber = execute()
         subscriber.assertNoErrors()
         Assert.assertEquals(1, subscriber.onNextEvents.size)
-        Assert.assertEquals(parseDateAsInstant("01/08/2016 00:05:00"), subscriber.onNextEvents.first().startedAt)
-        Assert.assertEquals(parseDateAsInstant("01/08/2016 01:10:00"), subscriber.onNextEvents.first().finishedAt)
+        Assert.assertEquals(parseDateAsInstant("01/08/2016 00:05:00"),
+                subscriber.onNextEvents.first().startedAt)
+        Assert.assertEquals(parseDateAsInstant("01/08/2016 01:10:00"),
+                subscriber.onNextEvents.first().finishedAt)
     }
 
     @Test
@@ -53,8 +55,10 @@ class AllTests {
         val subscriber = execute()
         subscriber.assertNoErrors()
         Assert.assertEquals(1, subscriber.onNextEvents.size)
-        Assert.assertEquals(parseDateAsInstant("01/08/2016 00:05:00"), subscriber.onNextEvents.first().startedAt)
-        Assert.assertEquals(parseDateAsInstant("01/08/2016 06:10:00"), subscriber.onNextEvents.first().finishedAt)
+        Assert.assertEquals(parseDateAsInstant("01/08/2016 00:05:00"),
+                subscriber.onNextEvents.first().startedAt)
+        Assert.assertEquals(parseDateAsInstant("01/08/2016 06:10:00"),
+                subscriber.onNextEvents.first().finishedAt)
     }
 
     @Test
@@ -77,13 +81,13 @@ class AllTests {
 
     // Helpers -------------------------------------------------------------------------------------
 
-    private fun execute(): TestSubscriber<DiseaseCondition> {
-        val processor: Supervisor = Supervisor(*fixture.rules.toTypedArray())
+    private fun execute(): TestSubscriber<Alert> {
+        val supervisor = Supervisor(*fixture.rules.toTypedArray())
         val events = fixture.records
-        val subscriber = TestSubscriber<DiseaseCondition>()
-        processor.notifications.subscribe(subscriber)
+        val subscriber = TestSubscriber<Alert>()
+        supervisor.alerts.subscribe(subscriber)
 
-        events.forEach { processor.process(it) }
+        events.forEach { supervisor.push(it) }
         return subscriber
     }
 }

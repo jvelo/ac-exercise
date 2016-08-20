@@ -56,7 +56,7 @@ class FixtureRule : TestRule {
             }
 
     private fun loadTestFile(name: String): List<SensorValue> {
-        val records = CSVFormat.DEFAULT.parse(Utils.getReader(name)).drop(1) // (skip header line)
+        val records = CSVFormat.DEFAULT.parse(Utils.getResourceReader(name)).drop(1) // (skip header line)
                 .map { record ->
                     listOf(
                             SensorValue(

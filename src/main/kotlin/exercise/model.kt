@@ -17,7 +17,7 @@ data class SensorValue(val timestamp: Instant, val dimension: Dimension, val val
 /**
  * The whole grow-house environment : temperature and humidity at a given time
  */
-data class Environment(val time: Instant, val temperature: Double, val humidity: Double)
+data class Environment(val time: Instant, val conditions: Map<Dimension, Double>)
 
 /**
  * Comparison operators for expressing [rules][Rule]
@@ -48,11 +48,10 @@ data class Rule(val name: String, val duration: Long, val expressions: List<Expr
      */
     fun evaluate(environment: Environment): Boolean {
         return expressions.all { expression ->
-            val evaluated = when (expression.dimension) {
-                Dimension.TEMPERATURE -> environment.temperature
-                Dimension.HUMIDITY -> environment.humidity
-            }
-            return@all when (expression.operator) {
+            val evaluated = environment.conditions[expression.dimension]
+            if  (evaluated == null)
+                false
+            else when (expression.operator) {
                 Operator.GREATER_THAN -> evaluated > expression.value
                 Operator.LESSER_THAN -> evaluated < expression.value
             }
@@ -61,9 +60,9 @@ data class Rule(val name: String, val duration: Long, val expressions: List<Expr
 }
 
 /**
- *
+ * An alert, emitted when a rule has been positively evaluated for its threshold duration
  */
-data class DiseaseCondition(val rule: Rule, val startedAt: Instant, val finishedAt: Instant)
+data class Alert(val rule: Rule, val startedAt: Instant, val finishedAt: Instant)
 
 /**
  * Potential disease condition, started at a given time for a given rule. It becomes an actual

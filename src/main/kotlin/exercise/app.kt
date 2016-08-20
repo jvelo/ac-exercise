@@ -1,17 +1,22 @@
 package exercise
 
-import de.vandermeer.asciitable.v2.V2_AsciiTable
-import de.vandermeer.asciitable.v2.render.V2_AsciiTableRenderer
+import de.vandermeer.asciitable.v2.V2_AsciiTable as Table
+import de.vandermeer.asciitable.v2.render.V2_AsciiTableRenderer as TableRenderer
 import de.vandermeer.asciitable.v2.render.WidthAbsoluteEven
-import de.vandermeer.asciitable.v2.themes.V2_E_TableThemes
+import de.vandermeer.asciitable.v2.themes.V2_E_TableThemes as TableThemes
 import org.apache.commons.csv.CSVFormat
 import java.time.LocalDateTime
 
-
 object App {
 
-    val eventProcessor = Supervisor(*allRules)
+    val supervisor = Supervisor(*allRules)
 
+    /**
+     * Entry point of the exercise.
+     *
+     * Loads the lab exports from CSV, feeds them to the supervisor and outputs emitted alerts for
+     * possible disease development.
+     */
     fun run () {
 
         val files = setOf(
@@ -20,7 +25,7 @@ object App {
         )
 
         val recordsLists = files.map { file ->
-            CSVFormat.DEFAULT.parse(Utils.getReader(file.second)).drop(1) // (skip header line)
+            CSVFormat.DEFAULT.parse(Utils.getResourceReader(file.second)).drop(1) // (skip header line)
                 .map { record -> SensorValue(
                         dimension = file.first,
                         timestamp =  parseDateAsInstant(record.get(0)),
@@ -28,31 +33,40 @@ object App {
                 )}
         }
 
-        val events = recordsLists.flatten().sortedBy { record -> record.timestamp }
+        val records = recordsLists.flatten().sortedBy { record -> record.timestamp }
 
-        val table = V2_AsciiTable()
-        val tableRenderer  = V2_AsciiTableRenderer()
-        tableRenderer.setTheme(V2_E_TableThemes.ASC7_LATEX_STYLE_STRONG.get())
-        tableRenderer.setWidth(WidthAbsoluteEven(80))
-
-        table.addRule()
-        table.addRow("Disease condition", "Started at", "Finished at", "Duration (HH:mm)")
-        table.addStrongRule()
-
-        this.eventProcessor.notifications.subscribe { message ->
+        this.supervisor.alerts.subscribe { alert ->
             table.addRow(
-                    message.rule.name,
-                    LocalDateTime.ofInstant(message.startedAt, zone).format(dateFormatter),
-                    LocalDateTime.ofInstant(message.finishedAt, zone).format(dateFormatter),
-                    formatTime(message.finishedAt.epochSecond - message.startedAt.epochSecond)
+                    alert.rule.name,
+                    LocalDateTime.ofInstant(alert.startedAt, timeZone).format(dateFormatter),
+                    LocalDateTime.ofInstant(alert.finishedAt, timeZone).format(dateFormatter),
+                    formatSecondsAsTime(alert.finishedAt.epochSecond - alert.startedAt.epochSecond)
             )
             table.addRule()
         }
 
-        events.forEach { event -> this.eventProcessor.process(event) }
+        // Feed all values to the supervisor
+        records.forEach { record -> this.supervisor.push(record) }
 
         println(tableRenderer.render(table))
     }
+
+    private val table: Table by lazy {
+        val table = Table()
+        // Add header row
+        table.addRule()
+        table.addRow("Disease condition", "Started at", "Finished at", "Duration (HH:mm)")
+        table.addStrongRule()
+        table
+    }
+
+    private val tableRenderer by lazy {
+        val tableRenderer  = TableRenderer()
+        tableRenderer.setTheme(TableThemes.ASC7_LATEX_STYLE_STRONG.get())
+        tableRenderer.setWidth(WidthAbsoluteEven(80))
+        tableRenderer
+    }
+
 }
 
 fun main(args: Array<String>) = App.run()
