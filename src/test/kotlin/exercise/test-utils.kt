@@ -46,7 +46,7 @@ class FixtureRule : TestRule {
                             when (ruleName) {
                                 RuleName.OIDIUM_SPORULATION -> oidiumSporulation
                                 RuleName.BOTRYTIS -> botrytis
-                                RuleName.OIDIUM_DEVELOPMENT -> oidiumSporulation
+                                RuleName.OIDIUM_DEVELOPMENT -> oidiumDevelopment
                             }
                         }
                     }

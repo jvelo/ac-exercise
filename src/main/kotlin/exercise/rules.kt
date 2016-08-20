@@ -15,4 +15,14 @@ val botrytis = Rule(
                 Expression(Dimension.TEMPERATURE, Operator.LESSER_THAN, 20.0))
 )
 
-val allRules = arrayOf(oidiumSporulation, botrytis)
+val oidiumDevelopment = Rule(
+        name = "Oidium development",
+        duration = 600,
+        expressions = listOf(
+                Expression(Dimension.HUMIDITY, Operator.LESSER_THAN, 70.0),
+                Expression(Dimension.TEMPERATURE, Operator.GREATER_THAN, 20.0)
+        ),
+        preconditions = listOf(oidiumSporulation)
+)
+
+val allRules = arrayOf(oidiumSporulation, botrytis, oidiumDevelopment)

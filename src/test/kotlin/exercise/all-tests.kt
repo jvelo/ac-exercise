@@ -79,6 +79,29 @@ class AllTests {
         Assert.assertEquals(0, subscriber.onNextEvents.size)
     }
 
+    // Oidium sporulation tests --------------------------------------------------------------------
+
+
+    @Test
+    @Fixture("oidium-development/with-precondition.csv")
+    @Rules(RuleName.OIDIUM_DEVELOPMENT, RuleName.OIDIUM_SPORULATION)
+    fun test_oidium_development_with_precondition() {
+        val subscriber = execute()
+        subscriber.assertNoErrors()
+        Assert.assertEquals(2, subscriber.onNextEvents.size)
+        Assert.assertEquals(oidiumSporulation, subscriber.onNextEvents[0].rule)
+        Assert.assertEquals(oidiumDevelopment, subscriber.onNextEvents[1].rule)
+    }
+
+    @Test
+    @Fixture("oidium-development/without-precondition.csv")
+    @Rules(RuleName.OIDIUM_DEVELOPMENT, RuleName.OIDIUM_SPORULATION)
+    fun test_oidium_development_without_precondition() {
+        val subscriber = execute()
+        subscriber.assertNoErrors()
+        Assert.assertEquals(0, subscriber.onNextEvents.size)
+    }
+
     // Helpers -------------------------------------------------------------------------------------
 
     private fun execute(): TestSubscriber<Alert> {

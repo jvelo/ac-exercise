@@ -51,8 +51,15 @@ class Supervisor(vararg val rules: Rule) {
                             Pair(measurement.dimension, measurement.value))
             ))
 
-            val rulesMatching = rules.filter { rule -> rule.evaluate(this.state.environment) }
+            // Find rules matching the current environment ...
+            val rulesMatching = rules.filter { rule ->
+                rule.preconditions.all { this.state.pastAlerts.contains(it) } && rule.evaluate(this.state.environment)
+            }
+
+            // Extract the rules that are new (were not matching before)
             val newMatches = rulesMatching.filter { !this.state.ongoingSituations.containsKey(it) }
+
+            // ... and those that were matching but don't anymore
             val finishedMatches = this.state.ongoingSituations.keys.filter { !rulesMatching.contains(it) }
 
             finishedMatches.forEach { rule ->
@@ -62,11 +69,13 @@ class Supervisor(vararg val rules: Rule) {
                             rule = rule,
                             startedAt = situation.startedAt,
                             finishedAt = this.state.environment.time))
+                    // Update state adding this alert to the set of past alerts
+                    this.state = this.state.copy(pastAlerts = this.state.pastAlerts.plus(rule))
                 }
             }
 
+            // If necessary, update state with new situations added and finished situations removed
             if (finishedMatches.size > 0 || newMatches.size > 0) {
-                // If necessary, update state with new situations added and finished situations removed
                 this.state = this.state.copy(ongoingSituations = this.state.ongoingSituations
                         // Remove finished situations
                         .filterKeys { rule -> !finishedMatches.contains(rule) }

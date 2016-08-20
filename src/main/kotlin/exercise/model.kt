@@ -39,7 +39,11 @@ data class Expression(val dimension: Dimension, val operator: Operator, val valu
 /**
  * A rule for describing conditions opportune for the development of a disease
  */
-data class Rule(val name: String, val duration: Long, val expressions: List<Expression>) {
+data class Rule(
+        val name: String,
+        val duration: Long,
+        val expressions: List<Expression>,
+        val preconditions: List<Rule> = listOf()) {
 
     /**
      * Evaluate this rule against the passed environment.
@@ -49,7 +53,7 @@ data class Rule(val name: String, val duration: Long, val expressions: List<Expr
     fun evaluate(environment: Environment): Boolean {
         return expressions.all { expression ->
             val evaluated = environment.conditions[expression.dimension]
-            if  (evaluated == null)
+            if (evaluated == null)
                 false
             else when (expression.operator) {
                 Operator.GREATER_THAN -> evaluated > expression.value
