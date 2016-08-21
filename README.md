@@ -11,7 +11,11 @@ Choices & design
 purpose language for the JVM, that I felt was suited for such an exercise. Also, it's very fun to write in.
 * I've designed the solution so that it would be simple to adapt and run "live". The main component,
 the "supervisor" exposes an observable stream of hot alerts using [RxJava](https://github.com/ReactiveX/RxJava).
-* In addition to the kotlin runtime and ReactiveX library, there are two dependencies : one for parsing CSV files simply and one for formatting ASCII tables as program output. 
+* The supervisor mutable state is isolated in its own immutable structure that gets copied and updated when state
+ changes. This is similar in nature to the state of a React component ; it helps to reason about the program and its
+ data, makes it predictable and less prone to unexpected side-effects.
+* In addition to the kotlin runtime and ReactiveX library, there are two dependencies : one for parsing CSV files simply
+ and one for formatting ASCII tables as program output.
 
 Assumptions
 -----------

@@ -15,7 +15,7 @@ enum class Dimension {
 data class SensorValue(val timestamp: Instant, val dimension: Dimension, val value: Double)
 
 /**
- * The whole grow-house environment: conditions at a given time
+ * The whole grow-house environment: conditions (temperature, humidity, etc.) at a given time
  */
 data class Environment(val time: Instant, val conditions: Map<Dimension, Double>)
 

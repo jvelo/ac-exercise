@@ -5,7 +5,23 @@ import rx.subjects.PublishSubject
 import java.time.Instant
 
 /**
- * @version $Id$
+ * The meat of the matter.
+ *
+ * The supervisor takes [SensorValue] events in (expected to arrive time-ordered), processes them
+ * and raises an alert when [a rule][Rule] has been evaluated positively for its given time threshold.
+ *
+ * Sample usage :
+ *
+ * ```
+ * val supervisor = Supervisor(rule1, rule2, rule3)
+ * supervisor.alerts.subscribe { alert -> println ("An alert has been raised ! $alert") }
+ * supervisor.push(sensorValue1)
+ * supervisor.push(sensorValue2)
+ * supervisor.push(sensorValue3)
+ * // etc.
+ * ```
+ *
+ * @property rules the list of rules to evaluate for sending alerts.
  */
 class Supervisor(vararg val rules: Rule) {
 
