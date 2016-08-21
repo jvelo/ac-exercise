@@ -37,7 +37,7 @@ src
 │   │       ├── rules.kt      # The actual rules evaluated by the program (oïdium, botrytis)
 │   │       ├── supervisor.kt # The core supervisor engines that detects diseases conditions
 │   │       └── utils.kt      # Various utils
-│   └── resources # CSV files
+│   └── resources             # CSV files directory
 └── test
     ├── kotlin
     │   └── exercise
