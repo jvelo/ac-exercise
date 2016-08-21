@@ -81,7 +81,6 @@ class AllTests {
 
     // Oidium sporulation tests --------------------------------------------------------------------
 
-
     @Test
     @Fixture("oidium-development/with-precondition.csv")
     @Rules(RuleName.OIDIUM_DEVELOPMENT, RuleName.OIDIUM_SPORULATION)
@@ -106,11 +105,10 @@ class AllTests {
 
     private fun execute(): TestSubscriber<Alert> {
         val supervisor = Supervisor(*fixture.rules.toTypedArray())
-        val events = fixture.records
         val subscriber = TestSubscriber<Alert>()
         supervisor.alerts.subscribe(subscriber)
 
-        events.forEach { supervisor.push(it) }
+        fixture.records.forEach { supervisor.push(it) }
         return subscriber
     }
 }

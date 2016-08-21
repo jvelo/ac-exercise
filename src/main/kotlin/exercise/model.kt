@@ -15,7 +15,7 @@ enum class Dimension {
 data class SensorValue(val timestamp: Instant, val dimension: Dimension, val value: Double)
 
 /**
- * The whole grow-house environment : temperature and humidity at a given time
+ * The whole grow-house environment: conditions at a given time
  */
 data class Environment(val time: Instant, val conditions: Map<Dimension, Double>)
 
@@ -38,6 +38,13 @@ data class Expression(val dimension: Dimension, val operator: Operator, val valu
 
 /**
  * A rule for describing conditions opportune for the development of a disease
+ * @property name the human-readable name of this rule
+ * @property duration the time the rule's expression must be valid for for an alert to be raised for
+ *  that rule
+ * @property expressions the list of expressions to evaluate. A logic AND is assumed : all expressions
+ * must return true for the rule to apply
+ * @property preconditions a list of rules for which alerts must of occurred before this rule can
+ * raise an alert itself
  */
 data class Rule(
         val name: String,
@@ -67,9 +74,3 @@ data class Rule(
  * An alert, emitted when a rule has been positively evaluated for its threshold duration
  */
 data class Alert(val rule: Rule, val startedAt: Instant, val finishedAt: Instant)
-
-/**
- * Potential disease condition, started at a given time for a given rule. It becomes an actual
- * disease condition when/if it is sustained for the rule threshold time
- */
-data class Situation(val startedAt: Instant, val rule: Rule)
