@@ -1,7 +1,7 @@
 AC Exercise
 ===========
 
-This program analyzes temperature & humidity grow-house time-series to detect conditions opportune
+This program analyzes temperature & humidity time-series from a grow-house to detect conditions opportune
 to the development of diseases, based on a set of rules.
 
 Choices & design
@@ -10,7 +10,8 @@ Choices & design
 * The program is written in [Kotlin](kotlinlang.org), an easy-to-read, concise and safe general
 purpose language for the JVM, that I felt was suited for such an exercise. Also, it's very fun to write in.
 * I've designed the solution so that it would be simple to adapt and run "live". The main component,
-the "supervisor" exposes an observable stream of alerts using [RxJava](https://github.com/ReactiveX/RxJava).
+the "supervisor" exposes an observable stream of hot alerts using [RxJava](https://github.com/ReactiveX/RxJava).
+* In addition to the kotlin runtime and ReactiveX library, there are two dependencies : one for parsing CSV files simply and one for formatting ASCII tables as program output. 
 
 Assumptions
 -----------
@@ -25,6 +26,16 @@ Areas for improvement
 * In this version and for the sake of the exercise, the supervisor emits an alert when a "situation"
  is finished. In a real system, of course the alert must be emitted as soon as the time threshold
  for the situation is reached.
+* Here the rules are declared formally by instantiating a rule object. It would be better to propose
+ a rule builder or a DSL to express rules and their expressions in simpler fashion.
+ For example such a DSL could allow to express rules the following way, in a type-safe manner :
+
+        "Botrytis" {
+			  when(temperature > 15)
+			  when(temperature < 25)
+			  when(humity > 90)
+			  for(600 minutes)
+        }
 
 Building & running
 ------------------
