@@ -14,8 +14,6 @@ the "supervisor" exposes an observable stream of hot alerts using [RxJava](https
 * The supervisor mutable state is isolated in its own immutable structure that gets copied and updated when state
  changes. This is similar in nature to the state of a React component ; it helps to reason about the program and its
  data, makes it predictable and less prone to unexpected side-effects.
-* In addition to the kotlin runtime and ReactiveX library, there are two dependencies : one for parsing CSV files simply
- and one for formatting ASCII tables as program output.
 
 Assumptions
 -----------
@@ -23,6 +21,31 @@ Assumptions
 * I've assumed sensor values are pushed to the system in natural time order
 * I've assumed a sensor value is "valid" until the next one received for that sensor
 * I've assumed all dates are given at Paris time
+
+Structure
+---------
+
+Here's the project structure overview. Some files are not listed for clarity.
+
+```
+src
+├── main
+│   ├── kotlin
+│   │   └── exercise
+│   │       ├── app.kt        # Entry point of the app. CLI parsing, CSV loading, etc.
+│   │       ├── model.kt      # Domain models the supervisor manipulates
+│   │       ├── rules.kt      # The actual rules evaluated by the program (oïdium, botrytis)
+│   │       ├── supervisor.kt # The core supervisor engines that detects diseases conditions
+│   │       └── utils.kt      # Various utils
+│   └── resources # CSV files
+└── test
+    ├── kotlin
+    │   └── exercise
+    │       ├── all-tests.kt  # Test suite with all tests
+    │       └── test-utils.kt # Unit test helpers
+    └── resources
+        └── fixtures          # Test fixtures
+```
 
 Areas for improvement
 ---------------------
@@ -45,6 +68,8 @@ Building & running
 ------------------
 
 You will need a JVM and [Gradle](https://gradle.org/gradle-download/) to build the program from sources.
+
+You can build the app using :
 
 ```
 gradle build
