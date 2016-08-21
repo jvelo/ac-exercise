@@ -55,6 +55,8 @@ class Supervisor(vararg val rules: Rule) {
 
     /**
      * Feed a new measurement (sensor value) to the supervisor.
+     *
+     * @param measurement the sensor value to push to the supervisor
      */
     @Synchronized
     fun push(measurement: SensorValue) {

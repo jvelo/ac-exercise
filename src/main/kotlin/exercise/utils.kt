@@ -30,7 +30,6 @@ fun formatSecondsAsTime(seconds: Long) = String.format("%02d:%02d",
         TimeUnit.SECONDS.toHours(seconds),
         TimeUnit.SECONDS.toMinutes(seconds) % 60)
 
-
 object Utils {
     /**
      * Gets a reader a classpath resource with the passed name.
@@ -38,3 +37,4 @@ object Utils {
     fun getResourceReader(fileName: String): Reader =
             BufferedReader(InputStreamReader(this.javaClass.classLoader.getResourceAsStream(fileName)))
 }
+

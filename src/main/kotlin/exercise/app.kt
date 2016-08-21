@@ -27,15 +27,15 @@ object App {
         val recordsLists = files.map { file ->
             CSVFormat.DEFAULT.parse(Utils.getResourceReader(file.second)).drop(1) // (skip header line)
                     .map { record ->
-                        SensorValue(
-                                dimension = file.first,
-                                timestamp = parseDateAsInstant(record.get(0)),
-                                value = record.get(1).toDouble()
-                        )
+                        SensorValue(dimension = file.first,
+                                    timestamp = parseDateAsInstant(record.get(0)),
+                                    value = record.get(1).toDouble())
                     }
         }
 
         val records = recordsLists.flatten().sortedBy { record -> record.timestamp }
+
+        this.printHeader()
 
         this.supervisor.alerts.subscribe { alert ->
             table.addRow(
@@ -51,6 +51,16 @@ object App {
         records.forEach { record -> this.supervisor.push(record) }
 
         println(tableRenderer.render(table))
+    }
+
+    private fun printHeader() {
+        val headerTable = Table()
+        headerTable.addRow("""
+        Using files:
+
+            ${files.map { "- ${it.first} : ${it.second}" }.joinToString("\n")}"""
+        )
+        println(tableRenderer.render(headerTable))
     }
 
     private val table by lazy {
