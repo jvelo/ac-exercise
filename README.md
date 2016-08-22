@@ -7,7 +7,7 @@ to the development of diseases, based on a set of rules.
 Choices & design
 ----------------
 
-* The program is written in [Kotlin](kotlinlang.org), an easy-to-read, concise and safe general
+* The program is written in [Kotlin](https://kotlinlang.org), an easy-to-read, concise and safe general
 purpose language for the JVM, that I felt was suited for such an exercise. Also, it's very fun to write in.
 * I've designed the solution so that it would be simple to adapt and run "live". The main component,
 the "supervisor" exposes an observable stream of hot alerts using [RxJava](https://github.com/ReactiveX/RxJava).
