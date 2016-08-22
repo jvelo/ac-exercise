@@ -35,7 +35,7 @@ src
 │   │       ├── app.kt        # Entry point of the app. CLI parsing, CSV loading, etc.
 │   │       ├── model.kt      # Domain models the supervisor manipulates
 │   │       ├── rules.kt      # The actual rules evaluated by the program (oïdium, botrytis)
-│   │       ├── supervisor.kt # The core supervisor engines that detects diseases conditions
+│   │       ├── supervisor.kt # The core supervisor engine that detects diseases conditions
 │   │       └── utils.kt      # Various utils
 │   └── resources             # CSV files directory
 └── test
@@ -99,3 +99,17 @@ The docker image is also built with gradle, using :
 gradle distDocker
 ```
 
+Running from docker
+-------------------
+
+Run with default provided log files :
+
+```
+docker run jvelo/ac-exercise
+```
+
+Run with custom log files fetched from HTTP URIs :
+
+```
+docker run jvelo/ac-exercise --temperature=http://pastebin.com/raw/GaFGfpPe --humidity=http://pastebin.com/raw/T3uTS4Sj
+```

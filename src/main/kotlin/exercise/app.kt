@@ -77,18 +77,24 @@ object App {
         )
 
         // Load records from CSV log files
-        val recordsLists = logFiles.map { file ->
-            val reader = when (file.source) {
-                Source.URI-> StringReader(getRemoteLogFile(file.location))
-                else -> Utils.getResourceReader(file.location)
-            }
-            CSVFormat.DEFAULT.parse(reader).drop(1) // (skip header line)
-                    .map { record ->
-                        SensorValue(dimension = file.dimension,
+        val recordsLists = try {
+            logFiles.map { file ->
+                val reader = when (file.source) {
+                    Source.URI -> StringReader(getRemoteLogFile(file.location))
+                    else -> Utils.getResourceReader(file.location)
+                }
+                CSVFormat.DEFAULT.parse(reader).drop(1) // (skip header line)
+                        .map { record ->
+                            SensorValue(dimension = file.dimension,
                                     timestamp = parseDateAsInstant(record.get(0)),
                                     value = record.get(1).toDouble())
-                    }
+                        }
+            }
+        } catch (e: Exception) {
+            println("Failed to fetch or parse log file: ${e.message}")
+            return
         }
+
         val records = recordsLists.flatten().sortedBy { record -> record.timestamp }
 
         this.printHeader(logFiles)
