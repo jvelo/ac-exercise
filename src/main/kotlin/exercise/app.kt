@@ -1,10 +1,7 @@
 package exercise
 
 import de.vandermeer.asciitable.v2.render.WidthAbsoluteEven
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.HelpFormatter
-import org.apache.commons.cli.Option
-import org.apache.commons.cli.Options
+import org.apache.commons.cli.*
 import org.apache.commons.csv.CSVFormat
 import java.io.StringReader
 import java.time.LocalDateTime
@@ -13,6 +10,9 @@ import de.vandermeer.asciitable.v2.render.V2_AsciiTableRenderer as TableRenderer
 import de.vandermeer.asciitable.v2.themes.V2_E_TableThemes as TableThemes
 
 object App {
+
+    // Our supervisor !
+    private val supervisor = Supervisor(*allRules)
 
     // CLI options
     private val options by lazy {
@@ -43,8 +43,7 @@ object App {
         tableRenderer
     }
 
-    // Our supervisor !
-    private val supervisor = Supervisor(*allRules)
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Entry point of the exercise.
@@ -64,17 +63,7 @@ object App {
             return
         }
 
-        // Get lab log files to use according to CLI argument with fall back on default files
-        val temperatureUri: String? = if (line.hasOption("temperature")) line.getOptionValue("temperature") else null
-        val humidityUri: String? = if (line.hasOption("humidity")) line.getOptionValue("humidity") else null
-        val logFiles = setOf(
-                LogFile(dimension = Dimension.HUMIDITY,
-                        location = humidityUri ?: "export_cavelab.10.humidity_2016-08-04.csv",
-                        source = if (humidityUri != null) Source.URI else Source.CLASSPATH_RESOURCE),
-                LogFile(dimension = Dimension.TEMPERATURE,
-                        location = temperatureUri ?: "export_cavelab.10.temperature_2016-08-04.csv",
-                        source = if (temperatureUri != null) Source.URI else Source.CLASSPATH_RESOURCE)
-        )
+        val logFiles = getLogFilesToUse(line)
 
         // Load records from CSV log files
         val recordsLists = try {
@@ -115,6 +104,25 @@ object App {
 
         // Output the built table with detected diseases
         println(tableRenderer.render(table))
+    }
+
+    // ---------------------------------------------------------------------------------------------
+
+    // Helpers
+
+    private fun getLogFilesToUse(line: CommandLine): Set<LogFile> {
+        // Get lab log files to use according to CLI argument with fall back on default files
+        val temperatureUri: String? = if (line.hasOption("temperature")) line.getOptionValue("temperature") else null
+        val humidityUri: String? = if (line.hasOption("humidity")) line.getOptionValue("humidity") else null
+        val logFiles = setOf(
+                LogFile(dimension = Dimension.HUMIDITY,
+                        location = humidityUri ?: "export_cavelab.10.humidity_2016-08-04.csv",
+                        source = if (humidityUri != null) Source.URI else Source.CLASSPATH_RESOURCE),
+                LogFile(dimension = Dimension.TEMPERATURE,
+                        location = temperatureUri ?: "export_cavelab.10.temperature_2016-08-04.csv",
+                        source = if (temperatureUri != null) Source.URI else Source.CLASSPATH_RESOURCE)
+        )
+        return logFiles
     }
 
     private fun printHeader(files: Set<LogFile>) {

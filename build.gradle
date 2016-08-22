@@ -31,11 +31,7 @@ jar {
 docker {
     baseImage "anapsix/alpine-java:latest"
     maintainer 'Jérôme Velociter <jerome@velociter.fr>'
-}
-
-
-distDocker {
-    applicationName = 'jvelo/ac-exercise'
+    applicationName = 'ac-exercise'
 }
 
 dependencies {

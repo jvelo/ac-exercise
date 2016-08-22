@@ -90,17 +90,10 @@ You can run unit tests using :
 gradle cleanTest test
 ```
 
-Building the docker image
--------------------------
-
-The docker image is also built with gradle, using :
-
-```
-gradle distDocker
-```
-
 Running from docker
 -------------------
+
+Docker image is published at https://hub.docker.com/r/jvelo/ac-exercise/
 
 Run with default provided log files :
 
@@ -112,4 +105,13 @@ Run with custom log files fetched from HTTP URIs :
 
 ```
 docker run jvelo/ac-exercise --temperature=http://pastebin.com/raw/GaFGfpPe --humidity=http://pastebin.com/raw/T3uTS4Sj
+```
+
+Building the docker image
+-------------------------
+
+The docker image is also built with gradle, using :
+
+```
+gradle distDocker
 ```
