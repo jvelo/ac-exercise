@@ -1,5 +1,11 @@
-AC Exercise
-===========
+This is the "take home test" answer I returned in 2016 when interviewing for Agricool.
+Below is the README I provided, unedited, with original typos or mistakes :)
+
+--
+
+
+Agricool Exercise
+=================
 
 This program analyzes temperature & humidity time-series from a grow-house to detect conditions opportune
 to the development of diseases, based on a set of rules.
